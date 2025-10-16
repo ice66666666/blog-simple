@@ -5,6 +5,7 @@ import PostCard from "./PostCard";
 
 export default function Home() {
   const [state, setState] = useState({ loading: true, posts: [], error: null });
+  const [commentsVisibility, setCommentsVisibility] = useState({});
 
   const fetchPosts = async () => {
     setState(prev => ({ ...prev, loading: true }));
@@ -36,6 +37,19 @@ export default function Home() {
       ...prev,
       posts: prev.posts.filter(post => post.id !== deletedPostId)
     }));
+    // También limpiar el estado de comentarios del post eliminado
+    setCommentsVisibility(prev => {
+      const newState = { ...prev };
+      delete newState[deletedPostId];
+      return newState;
+    });
+  };
+
+  const toggleComments = (postId) => {
+    setCommentsVisibility(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }));
   };
 
   if (state.loading) {
@@ -62,6 +76,8 @@ export default function Home() {
           post={p} 
           onPostUpdated={handlePostUpdated}
           onPostDeleted={handlePostDeleted}
+          showComments={commentsVisibility[p.id] || false}
+          onToggleComments={() => toggleComments(p.id)}
         />
       ))}
     </div>
