@@ -6,17 +6,37 @@ import PostCard from "./PostCard";
 export default function Home() {
   const [state, setState] = useState({ loading: true, posts: [], error: null });
 
+  const fetchPosts = async () => {
+    setState(prev => ({ ...prev, loading: true }));
+    try {
+      const data = await postsService.list();
+      setState({ loading: false, posts: data.posts || [], error: null });
+    } catch (err) {
+      setState({ loading: false, posts: [], error: err.message });
+    }
+  };
+
   useEffect(() => {
-    let mounted = true;
-    postsService
-      .list()
-      .then((data) => {
-        if (!mounted) return;
-        setState({ loading: false, posts: data.posts || [], error: null });
-      })
-      .catch((err) => setState({ loading: false, posts: [], error: err.message }));
-    return () => (mounted = false);
+    fetchPosts();
   }, []);
+
+  const handlePostUpdated = (updatedPost) => {
+    // Solo actualizar el post específico en lugar de refrescar toda la lista
+    setState(prev => ({
+      ...prev,
+      posts: prev.posts.map(post => 
+        post.id === updatedPost.id ? updatedPost : post
+      )
+    }));
+  };
+
+  const handlePostDeleted = (deletedPostId) => {
+    // Solo remover el post específico de la lista
+    setState(prev => ({
+      ...prev,
+      posts: prev.posts.filter(post => post.id !== deletedPostId)
+    }));
+  };
 
   if (state.loading) {
     return (
@@ -37,7 +57,12 @@ export default function Home() {
   return (
     <div className="grid">
       {state.posts.map((p) => (
-        <PostCard key={p.id} post={p} />
+        <PostCard 
+          key={p.id} 
+          post={p} 
+          onPostUpdated={handlePostUpdated}
+          onPostDeleted={handlePostDeleted}
+        />
       ))}
     </div>
   );

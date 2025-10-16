@@ -23,8 +23,8 @@ export default function Layout({ children }) {
         <div className="nav-right">
           {!isAuthenticated ? (
             <>
-              <NavLink className="btn ghost" to="/login">Iniciar sesión</NavLink>
-              <NavLink className="btn primary" to="/register">Registrarse</NavLink>
+              <button className="btn ghost" onClick={() => navigate("/login")}>Iniciar sesión</button>
+              <button className="btn primary" onClick={() => navigate("/register")}>Registrarse</button>
             </>
           ) : (
             <>

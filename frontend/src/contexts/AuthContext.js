@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   const login = async (credentials) => {
     const data = await loginSvc(credentials);
     setUser(data.user);
+    // El token ya se guarda en authService.js
     return data.user;
   };
 

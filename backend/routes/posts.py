@@ -16,15 +16,26 @@ def list_posts():
 @jwt_required()
 def create_post():
     try:
+        print(request.get_json())
         data = PostCreateSchema().load(request.get_json() or {})
     except ValidationError as e:
-        return jsonify(errors=e.messages), 400
+        # Devolver el primer error de validación de manera más amigable
+        first_error = list(e.messages.values())[0][0] if e.messages else "Datos del post inválidos"
+        return jsonify(error=first_error), 400
 
-    author_id = int(get_jwt_identity())
-    post = Post(title=data["title"], content=data["content"], author_id=author_id)
-    db.session.add(post)
-    db.session.commit()
-    return jsonify(post=PostOutSchema().dump(post)), 201
+    try:
+        author_id = int(get_jwt_identity())
+        print(author_id)
+        post = Post(title=data["title"], content=data["content"], author_id=author_id)
+        print("post", post)
+
+        db.session.add(post)
+        db.session.commit()
+        return jsonify(post=PostOutSchema().dump(post)), 201
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify(error="Error interno del servidor al crear el post"), 500
 
 @posts_bp.put("/<int:post_id>")
 @jwt_required()
