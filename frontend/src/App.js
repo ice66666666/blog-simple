@@ -8,7 +8,7 @@ import CreatePost from './components/CreatePost';
 import Layout from './components/Layout';
 
 export default function App() {
-  const [view, setView] = useState('posts');
+  // removed unused state vars to satisfy ESLint
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   function onLogin() {
@@ -16,11 +16,11 @@ export default function App() {
     setView('posts');
   }
 
+  // onLogout not used in current layout - keep available if needed later
   function onLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
-    setView('posts');
   }
 
   return (

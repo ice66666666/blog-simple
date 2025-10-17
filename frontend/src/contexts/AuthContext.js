@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { login as loginSvc, register as registerSvc, logout as logoutSvc } from "../services/authService";
 
 const AuthContext = createContext(null);

@@ -18,6 +18,8 @@ export default function CommentSection({ postId }) {
     }
   };
 
+  // fetchComments is intentionally omitted from deps as it's defined outside the effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchComments();
   }, [postId]);
