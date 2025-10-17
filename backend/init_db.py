@@ -4,7 +4,8 @@ Script para inicializar la base de datos
 Ejecutar: python init_db.py
 """
 
-from app import create_app, db
+from app import create_app
+from database import db
 from models import User, Post
 
 def init_db():

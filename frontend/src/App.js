@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import './App.css';
-import PostList from './components/PostList';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './styles/index.css';
+import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import CreatePost from './components/CreatePost';
+import Layout from './components/Layout';
 
 export default function App() {
   const [view, setView] = useState('posts');
@@ -22,31 +24,16 @@ export default function App() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Blog Simple</h1>
-        <nav>
-          <button onClick={() => setView('posts')}>Ver Posts</button>
-          {!isAuthenticated ? (
-            <>
-              <button onClick={() => setView('login')}>Iniciar sesión</button>
-              <button onClick={() => setView('register')}>Registrarse</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setView('create')}>Crear Post</button>
-              <button onClick={onLogout}>Cerrar sesión</button>
-            </>
-          )}
-        </nav>
-      </header>
-
-      <main>
-        {view === 'posts' && <PostList />}
-        {view === 'login' && <Login onLogin={onLogin} />}
-        {view === 'register' && <Register onRegister={onLogin} />}
-        {view === 'create' && <CreatePost />}
-      </main>
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login onLogin={onLogin} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/create" element={<CreatePost />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
+
 }
