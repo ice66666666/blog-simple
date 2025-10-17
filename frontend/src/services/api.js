@@ -1,4 +1,17 @@
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+let BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+// If the app is running in the browser and the env URL points at the docker
+// service hostname (e.g. http://backend:5000), replace it with localhost so
+// the browser (host) can reach the backend via the published port.
+if (typeof window !== 'undefined' && BASE_URL.includes('backend')) {
+  try {
+    const url = new URL(BASE_URL);
+    url.hostname = 'localhost';
+    BASE_URL = url.toString();
+  } catch (e) {
+    // ignore and keep the original BASE_URL
+  }
+}
 
 function getAuthHeaders() {
   const token = localStorage.getItem("access_token");
