@@ -1,7 +1,13 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { login as loginSvc, register as registerSvc, logout as logoutSvc } from "../services/authService";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext({
+  user: null,
+  isAuthenticated: false,
+  login: async () => {},
+  register: async () => {},
+  logout: () => {},
+});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
