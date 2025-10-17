@@ -8,8 +8,7 @@ COPY package.json ./
 # Copiamos lock si existe; si no existe, no falla
 COPY package-lock.json* ./
 
-# Si hay package-lock.json -> npm ci
-# Si NO hay -> npm install
+
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 # El código se montará por volumes desde el host
