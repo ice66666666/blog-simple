@@ -13,7 +13,6 @@ export default function App() {
 
   function onLogin() {
     setIsAuthenticated(true);
-    setView('posts');
   }
 
   // onLogout not used in current layout - keep available if needed later
