@@ -14,7 +14,7 @@ if (typeof window !== 'undefined' && BASE_URL.includes('backend')) {
 }
 
 function getAuthHeaders() {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 

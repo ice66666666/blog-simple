@@ -19,12 +19,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
-# Copiar entrypoint y darle permisos
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Copiar entrypoint al directorio de trabajo (/app) y darle permisos
+# MODIFICACIÓN CLAVE: Copia el entrypoint.sh a la ubicación donde será ejecutado.
+COPY entrypoint.sh .
+RUN sed -i 's/\r$//' entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 # Exponer el puerto 5000
 EXPOSE 5000
 
 # Usar entrypoint para inicializar DB y arrancar la app
-ENTRYPOINT ["/entrypoint.sh"]
+# MODIFICACIÓN CLAVE: Ejecuta el script desde la ruta absoluta /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
