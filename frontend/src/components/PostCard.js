@@ -75,6 +75,61 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted, showComme
     setError(null);
   };
 
+  const escapeHtml = (s) =>
+    s
+      .replaceAll(/&/g, "&amp;")
+      .replaceAll(/</g, "&lt;")
+      .replaceAll(/>/g, "&gt;")
+      .replaceAll(/\"/g, "&quot;")
+      .replaceAll(/'/g, "&#39;");
+
+  const toHtml = (text) => {
+    if (!text) return { __html: "" };
+    
+    let html = String(text);
+    const replacements = [];
+    let replacementIndex = 0;
+    
+    // Paso 1: Convertir imágenes de markdown a HTML
+    // Patrón: ![alt text](url)
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
+      const escapedAlt = escapeHtml(alt || "imagen");
+      const cleanUrl = url.trim();
+      // NO escapar la URL aquí, solo limpiarla
+      const imgTag = `<img src="${cleanUrl}" alt="${escapedAlt}" loading="lazy" decoding="async" style="max-width:100%; height:auto; border-radius:8px; margin:8px 0; display:block;" />`;
+      const placeholder = `__IMGPLACEHOLDER${replacementIndex}__`;
+      replacements.push({ placeholder, replacement: imgTag });
+      replacementIndex++;
+      return placeholder;
+    });
+    
+    // Paso 2: Convertir enlaces de markdown a HTML (solo los que no son imágenes)
+    html = html.replace(/([^!]|^)\[([^\]]+)\]\(([^)]+)\)/g, (match, before, txt, url) => {
+      const escapedText = escapeHtml(txt);
+      const cleanUrl = url.trim();
+      const linkTag = `<a href="${cleanUrl}" target="_blank" rel="noreferrer">${escapedText}</a>`;
+      const placeholder = `__LINKPLACEHOLDER${replacementIndex}__`;
+      replacements.push({ placeholder, replacement: linkTag });
+      replacementIndex++;
+      return (before || '') + placeholder;
+    });
+    
+    // Paso 3: Escapar HTML restante
+    // Los placeholders tienen guiones bajos que NO se escapan, así que están seguros
+    html = escapeHtml(html);
+    
+    // Paso 4: Restaurar los placeholders con HTML real
+    // Usar split/join que es más seguro y funciona siempre
+    replacements.forEach(({ placeholder, replacement }) => {
+      html = html.split(placeholder).join(replacement);
+    });
+    
+    // Paso 5: Convertir saltos de línea a <br/>
+    html = html.replace(/\n/g, "<br/>");
+    
+    return { __html: html };
+  };
+
   return (
     <article className="card">
       {isEditing ? (
@@ -114,9 +169,9 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted, showComme
       ) : (
         <>
           <h3 className="card-title">{post.title}</h3>
-          <p className="card-content">{post.content}</p>
+          <div className="card-content" dangerouslySetInnerHTML={toHtml(post.content)} />
           <div className="card-meta">
-            <span>Por: {post.author_email || `Usuario ${post.author_id}`}</span>
+            <span>Por: {post.author_username || post.author_email || `Usuario ${post.author_id}`}</span>
             <span>Creado: {new Date(post.created_at).toLocaleString()}</span>
           </div>
           {error && <p className="error" style={{ marginTop: "8px" }}>{error}</p>}

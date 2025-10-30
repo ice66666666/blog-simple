@@ -3,6 +3,7 @@ from models.post import Post
 from models.user import User
 from schemas.post_schema import PostCreateSchema, PostOutSchema
 from marshmallow import ValidationError
+from sqlalchemy.orm import joinedload
 
 #Servicio para manejar la lógica de negocio de posts
 class PostService:
@@ -10,7 +11,8 @@ class PostService:
     #Obtener todos los posts ordenados por fecha
     @staticmethod
     def get_all_posts():
-        posts = Post.query.order_by(Post.created_at.desc()).all()
+        # Cargar los posts con la relación de autor para evitar N+1 queries
+        posts = Post.query.options(joinedload(Post.author)).order_by(Post.created_at.desc()).all()
         return PostOutSchema(many=True).dump(posts)
 
     #Crear un nuevo post
@@ -29,6 +31,9 @@ class PostService:
         )
         
         db.session.add(post)
+        db.session.flush()  # Para obtener el ID y mantener la sesión
+        # Asegurar que el autor esté cargado
+        post = Post.query.options(joinedload(Post.author)).filter_by(id=post.id).first()
         db.session.commit()
         return PostOutSchema().dump(post)
 
@@ -43,6 +48,8 @@ class PostService:
         post.title = validated_data["title"]
         post.content = validated_data["content"]
         db.session.commit()
+        # Recargar el post con el autor para la serialización
+        post = Post.query.options(joinedload(Post.author)).filter_by(id=post.id).first()
         return PostOutSchema().dump(post)
     
     #Eliminar un post

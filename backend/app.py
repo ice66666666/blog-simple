@@ -26,6 +26,10 @@ def create_app():
     return app
 
 if __name__ == "__main__": 
+    import os
     app = create_app()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Desactivar reloader en Docker para evitar problemas de memoria
+    # El reloader causa problemas con volúmenes montados y file watchers
+    debug_mode = os.getenv("FLASK_ENV") == "development"
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode, use_reloader=False)
 

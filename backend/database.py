@@ -16,6 +16,14 @@ def init_extensions(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "change-me")
     db.init_app(app)
+
+    with app.app_context():
+        from models import User
+        from models import Post
+        from models import Comment
+        from models import Image
+        db.create_all()
+
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)

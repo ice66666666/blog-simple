@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import CreatePost from './components/CreatePost';
 import Layout from './components/Layout';
+import ImageUpload from './components/ImageUpload';
 
 export default function App() {
   // removed unused state vars to satisfy ESLint
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/login" element={<Login onLogin={onLogin} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create" element={<CreatePost />} />
+          <Route path="/upload" element={<ImageUpload />} />
         </Routes>
       </Layout>
     </BrowserRouter>

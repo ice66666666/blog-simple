@@ -13,7 +13,9 @@ def list_posts():
         posts = PostService.get_all_posts()
         return jsonify(posts=posts), 200
     except Exception as e:
-        return jsonify(error="Error al obtener posts"), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify(error=f"Error al obtener posts: {str(e)}"), 500
 
 #Crear un nuevo post
 @posts_bp.post("/")

@@ -19,10 +19,10 @@
   --gray-50: #f8fafc;
   --white: #ffffff;
 
-  --bg: var(--gray-50);
-  --card: var(--white);
-  --text: var(--gray-900);
-  --text-secondary: var(--gray-700);
+  --bg: #000000;
+  --card: #1a1a1a;
+  --text: #f0f0f0;
+  --text-secondary: var(--gray-300);
   --muted: var(--gray-500);
   --primary: var(--blue-600);
   --primary-hover: #1d4ed8;
@@ -41,7 +41,8 @@ html, body, #root { height: 100%; }
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  background: var(--bg);
+  background: #000000;
+  background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
   font-weight: 400;
@@ -55,12 +56,13 @@ body {
   align-items: center; 
   justify-content: space-between;
   padding: 16px 24px; 
-  background: var(--blue-900); 
+  background: #0a0a0a; 
   color: #fff;
   box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid #333333;
 }
 
 .nav .brand {
@@ -120,41 +122,82 @@ body {
 }
 
 .grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-  gap: 20px; 
+  display: flex; 
+  flex-direction: column;
+  gap: 24px;
+  /* Mostrar uno tras otro cuando hay cantidad dispar */
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* Cards más elegantes */
 .card {
   background: var(--card);
-  border: 1px solid var(--gray-200);
+  border: 1px solid #333333;
   border-radius: 16px;
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden;
+  /* Sin transición en carga inicial, solo en hover */
+  transition: none;
+  /* Permitir que cada card tenga su propia altura según su contenido */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-  border-color: var(--gray-300);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  border-color: #444444;
+  background: #222222;
+}
+
+.form h2 {
+  color: #ffffff;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .card-title { 
   margin: 0 0 12px; 
-  color: var(--blue-600); 
-  font-weight: 600;
-  font-size: 1.125rem;
+  color: var(--blue-500); 
+  font-weight: 700;
+  font-size: 1.25rem;
   line-height: 1.4;
+  overflow-wrap:anywhere;
+  word-break:break-all;
+  letter-spacing: -0.02em;
 }
 
 .card-content { 
   margin: 0 0 16px; 
   color: var(--text-secondary); 
   line-height: 1.6;
+  white-space: pre-wrap;           /* respeta saltos de línea del usuario */
+  overflow-wrap: anywhere;         /* permite cortar palabras largas */
+  word-break: break-word;          /* fallback adicional */
+  flex: 1;                         /* Permite que el contenido ocupe el espacio disponible */
+  min-height: 0;                   /* Permite que el contenido se ajuste */
+}
+
+/* Estilos para imágenes dentro de las cards */
+.card-content img {
+  max-width: 100%;
+  max-height: 500px;
+  height: auto;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: block;
+  object-fit: contain;
+  width: 100%;
 }
 
 .card-meta { 
@@ -163,13 +206,15 @@ body {
   color: var(--muted); 
   font-size: 13px; 
   font-weight: 500;
+  margin-top: auto;                /* Empuja el meta hacia abajo */
+  padding-top: 8px;                /* Separación del contenido */
 }
 
 /* Forms más elegantes */
 .form label { 
   display: block; 
   margin-top: 16px; 
-  color: var(--text-secondary); 
+  color: #ffffff; 
   font-weight: 500;
   font-size: 14px;
 }
@@ -178,18 +223,26 @@ body {
   width: 100%; 
   padding: 12px 16px; 
   margin-top: 8px;
-  border: 1px solid var(--gray-300); 
-  border-radius: 12px; 
-  background: #fff;
+  border: 1px solid #444444; 
+  border-radius: 16px; 
+  background: #222222;
+  color: #ffffff;
   font-family: inherit;
   font-size: 14px;
   transition: all 0.2s ease;
 }
 
+.form input::placeholder, .form textarea::placeholder {
+  color: #888888;
+  opacity: 1;
+}
+
 .form input:focus, .form textarea:focus { 
   outline: none; 
   border-color: var(--primary); 
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background: #2a2a2a;
+  color: #ffffff;
 }
 
 /* Errores de campo */
@@ -226,10 +279,10 @@ body {
 /* Buttons más elegantes */
 .btn {
   padding: 10px 16px;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid transparent;
-  background: var(--gray-200);
-  color: var(--gray-900);
+  background: #333333;
+  color: var(--text);
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
@@ -247,25 +300,27 @@ body {
 }
 
 .btn.primary { 
-  background: var(--primary); 
+  background: linear-gradient(135deg, var(--primary) 0%, var(--blue-600) 100%);
   color: #fff; 
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  border: none;
 }
 
 .btn.primary:hover { 
-  background: var(--primary-hover); 
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, #1e40af 100%);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn.ghost { 
   background: transparent; 
-  border-color: var(--gray-300); 
-  color: var(--gray-600); 
+  border-color: #444444; 
+  color: var(--gray-300); 
 }
 
 .btn.ghost:hover {
-  background: var(--gray-100);
-  color: var(--gray-900);
+  background: #333333;
+  color: var(--text);
 }
 
 .btn.danger { 
@@ -324,7 +379,7 @@ body {
 .comment-section {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid #333333;
 }
 
 .comment-section h4 {
@@ -351,15 +406,18 @@ body {
 
 .comment-item {
   padding: 16px;
-  background: var(--gray-50);
-  border-radius: 12px;
-  border: 1px solid var(--gray-200);
+  background: #222222;
+  border-radius: 16px;
+  border: 1px solid #333333;
 }
 
 .comment-content {
   margin: 0 0 12px 0;
   color: var(--text-secondary);
   line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .comment-meta {
@@ -383,8 +441,9 @@ body {
   }
   
   .grid {
-    grid-template-columns: 1fr;
     gap: 16px;
+    max-width: 100%;
+    padding: 0 8px;
   }
   
   .nav {
